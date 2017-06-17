@@ -20,7 +20,7 @@ typedef void(^OSButtonAnimateBlock)();
 
 #define OS_MAX_CORNER_RADIUS    MIN(CGRectGetWidth(self.bounds) * 0.5, CGRectGetHeight(self.bounds) * 0.5)
 #define OS_MAX_BORDER_WIDTH     OS_MAX_CORNER_RADIUS
-#define OS_MAGICAL_VALUE        0.29
+#define OS_PADDING_VALUE        0.29
 
 static CGRect CGRectEdgeInset(CGRect rect, UIEdgeInsets insets)
 {
@@ -154,7 +154,12 @@ imageView = _imageView;
 
 #pragma mark - ~~~~~~~~~~~~~~~~~~~~~~~ Public ~~~~~~~~~~~~~~~~~~~~~~~
 
-- (void)setTitle:(NSString *)title {
+- (void)setTitleColor:(nullable UIColor *)color forState:(UIControlState)state {
+    _titleContentView.textLabel.textColor = color;
+}
+
+
+- (void)setTitle:(NSString *)title forState:(UIControlState)state {
     if (_title == title) {
         return;
     }
@@ -163,7 +168,7 @@ imageView = _imageView;
     self.titleLabel.text = title;
     [self.titleLabel sizeToFit];
 }
-- (void)setSubtitle:(NSString *)subtitle {
+- (void)setSubtitle:(NSString *)subtitle forState:(UIControlState)state {
     if (_subtitle == subtitle) {
         return;
     }
@@ -172,7 +177,7 @@ imageView = _imageView;
     self.detailLabel.text = subtitle;
     [self.detailLabel sizeToFit];
 }
-- (void)setImage:(UIImage *)image {
+- (void)setImage:(UIImage *)image forState:(UIControlState)state {
     if (_image == image) {
         return;
     }
@@ -206,15 +211,18 @@ imageView = _imageView;
     {
         case OSButtonStyleDefault:
         {
-            self.imageContentView.frame = CGRectNull;
-            self.detailContentView.frame = CGRectNull;
+            _imageContentView.frame = CGRectNull;
+            _detailContentView.frame = CGRectNull;
+            [_imageContentView removeFromSuperview];
+            [_detailContentView removeFromSuperview];
             self.titleContentView.frame = [self boxingRect];
         }
             break;
             
         case OSButtonStyleSubTitle:
         {
-            self.imageContentView.frame = CGRectNull;
+            _imageContentView.frame = CGRectNull;
+            [_imageContentView removeFromSuperview];
             CGRect boxRect = [self boxingRect];
             self.titleContentView.frame = CGRectMake(boxRect.origin.x,
                                                      boxRect.origin.y,
@@ -229,8 +237,10 @@ imageView = _imageView;
             
         case OSButtonStyleCentralImage:
         {
-            self.titleContentView.frame = CGRectNull;
-            self.detailContentView.frame = CGRectNull;
+            _titleContentView.frame = CGRectNull;
+            _detailContentView.frame = CGRectNull;
+            [_titleContentView removeFromSuperview];
+            [_detailContentView removeFromSuperview];
             self.imageContentView.frame = [self boxingRect];
         }
             break;
@@ -239,7 +249,8 @@ imageView = _imageView;
         default:
         {
             CGRect boxRect = [self boxingRect];
-            self.titleContentView.frame = CGRectNull;
+            _titleContentView.frame = CGRectNull;
+            [_titleContentView removeFromSuperview];
             self.imageContentView.frame = CGRectMake(boxRect.origin.x,
                                                      boxRect.origin.y,
                                                      CGRectGetWidth(boxRect),
@@ -269,8 +280,8 @@ imageView = _imageView;
 
 - (CGRect)boxingRect {
     CGRect internalRect = CGRectInset(self.bounds,
-                                      self.layer.cornerRadius * OS_MAGICAL_VALUE + self.layer.borderWidth,
-                                      self.layer.cornerRadius * OS_MAGICAL_VALUE + self.layer.borderWidth);
+                                      self.layer.cornerRadius * OS_PADDING_VALUE + self.layer.borderWidth,
+                                      self.layer.cornerRadius * OS_PADDING_VALUE + self.layer.borderWidth);
     return CGRectEdgeInset(internalRect, self.contentEdgeInsets);
 }
 
