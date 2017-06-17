@@ -149,7 +149,7 @@ imageView = _imageView;
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-    return [self initWithFrame:frame buttonType:OSButtonType1];
+    return [self initWithFrame:frame buttonType:OSButtonTypeDefault];
 }
 
 #pragma mark - ~~~~~~~~~~~~~~~~~~~~~~~ Public ~~~~~~~~~~~~~~~~~~~~~~~
@@ -378,9 +378,12 @@ imageView = _imageView;
 
 - (void)setEnabled:(BOOL)enabled {
     [super setEnabled:enabled];
-    [UIView animateWithDuration:0.3 animations:^{
-        self.foregroundView.alpha = enabled ? 1.0 : 0.5;
-    }];
+    [UIView animateWithDuration:0.3 delay:0.0
+                        options:UIViewAnimationOptionAllowUserInteraction
+                     animations:^{
+                         self.foregroundView.alpha = enabled ? 1.0 : 0.5;
+                     }
+                     completion:nil];
 }
 
 - (void)setSelected:(BOOL)selected {
@@ -388,9 +391,15 @@ imageView = _imageView;
     
     if (self.fadeInOutOnDisplay) {
         if (selected) {
-            [UIView animateWithDuration:0.3 animations:[self fadeInBlock]];
+            [UIView animateWithDuration:0.3 delay:0.0
+                                options:UIViewAnimationOptionAllowUserInteraction
+                             animations:[self fadeInBlock]
+                             completion:nil];
         } else {
-            [UIView animateWithDuration:0.3 animations:[self fadeOutBlock]];
+            [UIView animateWithDuration:0.3 delay:0.0
+                                options:UIViewAnimationOptionAllowUserInteraction
+                             animations:[self fadeOutBlock]
+                             completion:nil];
         }
     } else {
         if (selected) {
@@ -405,7 +414,6 @@ imageView = _imageView;
     _buttonType = buttonType;
     if (buttonType == OSButtonType1) {
         self.cornerRadius = OS_MAX_BORDER_WIDTH;
-        self.borderWidth  = 2;
         self.borderColor  = [UIColor clearColor];
         self.contentColor = [UIColor blackColor];
         self.contentAnimateColor = [UIColor whiteColor];
@@ -421,7 +429,7 @@ imageView = _imageView;
         self.contentAnimateColor = [UIColor colorWithRed:220/255.0 green:1.0/255.0 blue:1.0/255.0 alpha:1.0];
         self.foregroundColor = [[UIColor whiteColor] colorWithAlphaComponent:0.5];
         self.backgroundColor = [UIColor clearColor];
-    } else {
+    } else if (buttonType == OSButtonType3) {
         self.cornerRadius = OS_MAX_BORDER_WIDTH;
         self.borderWidth  = 2;
         self.restoreSelectedState = NO;
@@ -431,6 +439,10 @@ imageView = _imageView;
         self.contentAnimateColor = [UIColor colorWithRed:1.0/255.0 green:1.0/255.0 blue:255.0/255.0 alpha:1.0];;
         self.foregroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.5];
         self.foregroundAnimateColor = [UIColor whiteColor];
+    } else {
+        self.contentAnimateColor = [[UIColor blackColor] colorWithAlphaComponent:0.5];
+        self.foregroundColor = [UIColor whiteColor];
+        self.foregroundAnimateColor = [UIColor clearColor];
     }
 
 }

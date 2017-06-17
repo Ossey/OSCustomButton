@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 typedef NS_ENUM(NSInteger, OSButtonType) {
+    OSButtonTypeDefault,
     OSButtonType1,
     OSButtonType2,
     OSButtonType3
@@ -32,6 +33,7 @@ typedef NS_ENUM(NSInteger, OSButtonType) {
 @property (nonatomic, readonly, strong) UIImageView *imageView;
 @property (nonatomic, assign) UIEdgeInsets contentEdgeInsets;
 
+- (instancetype)initWithFrame:(CGRect)frame;
 - (instancetype)initWithFrame:(CGRect)frame buttonType:(OSButtonType)type;
 + (instancetype)buttonWithFrame:(CGRect)frame buttonType:(OSButtonType)type;
 

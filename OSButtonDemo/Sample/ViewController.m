@@ -38,6 +38,10 @@
     [self.view addSubview:btn3];
     btn3.image = [UIImage imageNamed:@"dropbox-icon"];
     
+    OSCustomButton *btn4 = [[OSCustomButton alloc] initWithFrame:CGRectMake(100, 500, 80, 80)];
+    [self.view addSubview:btn4];
+    btn4.image = [UIImage imageNamed:@"aws-icon"];
+    
 
 }
 
