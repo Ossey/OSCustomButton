@@ -127,8 +127,8 @@ imageView = _imageView;
 
 #pragma mark - ~~~~~~~~~~~~~~~~~~~~~~~ initialize ~~~~~~~~~~~~~~~~~~~~~~~
 
-+ (instancetype)buttonWithFrame:(CGRect)frame buttonType:(OSButtonType)type {
-    return [[self alloc] initWithFrame:frame buttonType:type];
++ (instancetype)buttonWithType:(OSButtonType)buttonType  {
+    return [[self alloc] initWithFrame:CGRectZero buttonType:buttonType];
 }
 
 - (instancetype)initWithFrame:(CGRect)frame buttonType:(OSButtonType)type {
@@ -187,6 +187,8 @@ imageView = _imageView;
 - (void)layoutSubviews {
     [super layoutSubviews];
     
+    [self setButtonType:self.buttonType];
+    
     CGFloat cornerRadius = self.layer.cornerRadius = MAX(MIN(OS_MAX_CORNER_RADIUS, self.cornerRadius), 0);
     CGFloat borderWidth = self.layer.borderWidth = MAX(MIN(OS_MAX_BORDER_WIDTH, self.borderWidth), 0);
     
@@ -215,13 +217,13 @@ imageView = _imageView;
             self.imageContentView.frame = CGRectNull;
             CGRect boxRect = [self boxingRect];
             self.titleContentView.frame = CGRectMake(boxRect.origin.x,
-                                              boxRect.origin.y,
-                                              CGRectGetWidth(boxRect),
-                                              CGRectGetHeight(boxRect) * 0.8);
+                                                     boxRect.origin.y,
+                                                     CGRectGetWidth(boxRect),
+                                                     CGRectGetHeight(boxRect) * 0.8);
             self.detailContentView.frame = CGRectMake(boxRect.origin.x,
-                                                    CGRectGetMaxY(self.titleContentView.frame),
-                                                    CGRectGetWidth(boxRect),
-                                                    CGRectGetHeight(boxRect) * 0.2);
+                                                      CGRectGetMaxY(self.titleContentView.frame),
+                                                      CGRectGetWidth(boxRect),
+                                                      CGRectGetHeight(boxRect) * 0.2);
         }
             break;
             
@@ -239,13 +241,13 @@ imageView = _imageView;
             CGRect boxRect = [self boxingRect];
             self.titleContentView.frame = CGRectNull;
             self.imageContentView.frame = CGRectMake(boxRect.origin.x,
-                                               boxRect.origin.y,
-                                               CGRectGetWidth(boxRect),
-                                               CGRectGetHeight(boxRect) * 0.8);
+                                                     boxRect.origin.y,
+                                                     CGRectGetWidth(boxRect),
+                                                     CGRectGetHeight(boxRect) * 0.8);
             self.detailContentView.frame = CGRectMake(boxRect.origin.x,
-                                                    CGRectGetMaxY(self.imageContentView.frame),
-                                                    CGRectGetWidth(boxRect),
-                                                    CGRectGetHeight(boxRect) * 0.2);
+                                                      CGRectGetMaxY(self.imageContentView.frame),
+                                                      CGRectGetWidth(boxRect),
+                                                      CGRectGetHeight(boxRect) * 0.2);
         }
             break;
     }
@@ -441,10 +443,10 @@ imageView = _imageView;
         self.foregroundAnimateColor = [UIColor whiteColor];
     } else {
         self.contentAnimateColor = [[UIColor blackColor] colorWithAlphaComponent:0.5];
-        self.foregroundColor = [UIColor whiteColor];
+        self.foregroundColor = [UIColor clearColor];
         self.foregroundAnimateColor = [UIColor clearColor];
     }
-
+    
 }
 
 #pragma mark - ~~~~~~~~~~~~~~~~~~~~~~~ Touchs ~~~~~~~~~~~~~~~~~~~~~~~
@@ -472,11 +474,11 @@ imageView = _imageView;
     BOOL wasTrackingInside = self.isTrackingInside;
     self.trackingInside = [self isTouchInside];
     /*
-    if (wasTrackingInside && !self.isTrackingInside) {
-        self.selected = !self.isSelected;
-    } else if (!wasTrackingInside && self.isTrackingInside) {
-        self.selected = !self.isSelected;
-    }
+     if (wasTrackingInside && !self.isTrackingInside) {
+     self.selected = !self.isSelected;
+     } else if (!wasTrackingInside && self.isTrackingInside) {
+     self.selected = !self.isSelected;
+     }
      */
     if (wasTrackingInside != self.isTrackingInside) {
         self.selected = !self.isSelected;
@@ -527,7 +529,7 @@ imageView = _imageView;
             self.foregroundView.backgroundColor = self.foregroundAnimateColor;
         }
     };
-
+    
 }
 
 - (OSButtonAnimateBlock)fadeOutBlock {

@@ -34,9 +34,7 @@ typedef NS_ENUM(NSInteger, OSButtonType) {
 @property (nonatomic, assign) UIEdgeInsets contentEdgeInsets;
 
 - (instancetype)initWithFrame:(CGRect)frame;
-- (instancetype)initWithFrame:(CGRect)frame buttonType:(OSButtonType)type;
-+ (instancetype)buttonWithFrame:(CGRect)frame buttonType:(OSButtonType)type;
-
++ (instancetype)buttonWithType:(OSButtonType)buttonType;
 - (void)setTitle:(NSString *)title;
 - (void)setSubtitle:(NSString *)subtitle;
 - (void)setImage:(UIImage *)image;

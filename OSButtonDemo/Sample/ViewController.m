@@ -18,27 +18,32 @@
 {
     [super viewDidLoad];
     
-    OSCustomButton *btn = [[OSCustomButton alloc] initWithFrame:CGRectMake(100, 100, 80, 80) buttonType:OSButtonType1];
+    OSCustomButton *btn = [OSCustomButton buttonWithType:OSButtonType1];
+    [btn setFrame:CGRectMake(100, 100, 80, 80)];
     [self.view addSubview:btn];
     [btn setSubtitle:@"Apple"];
     btn.detailLabel.font = [UIFont systemFontOfSize:10];
     btn.image = [UIImage imageNamed:@"apple-icon"];
     
-    OSCustomButton *btn1 = [[OSCustomButton alloc] initWithFrame:CGRectMake(100, 200, 80, 80) buttonType:OSButtonType1];
+    OSCustomButton *btn1 = [OSCustomButton buttonWithType:OSButtonType1];
+    [btn1 setFrame:CGRectMake(100, 200, 80, 80)];
     [self.view addSubview:btn1];
     btn1.title = @"Apple";
     btn1.titleLabel.font = [UIFont boldSystemFontOfSize:50];
     
     
-    OSCustomButton *btn2 = [[OSCustomButton alloc] initWithFrame:CGRectMake(100, 300, 80, 80) buttonType:OSButtonType2];
+    OSCustomButton *btn2 = [OSCustomButton buttonWithType:OSButtonType2];
+    [btn2 setFrame:CGRectMake(100, 300, 80, 80)];
     [self.view addSubview:btn2];
     btn2.image = [UIImage imageNamed:@"blip-icon"];
     
-    OSCustomButton *btn3 = [[OSCustomButton alloc] initWithFrame:CGRectMake(100, 400, 80, 80) buttonType:OSButtonType3];
+    OSCustomButton *btn3 = [OSCustomButton buttonWithType:OSButtonType3];
+    [btn3 setFrame:CGRectMake(100, 400, 80, 80)];
     [self.view addSubview:btn3];
     btn3.image = [UIImage imageNamed:@"dropbox-icon"];
     
-    OSCustomButton *btn4 = [[OSCustomButton alloc] initWithFrame:CGRectMake(100, 500, 80, 80)];
+    OSCustomButton *btn4 = [[OSCustomButton alloc] init];
+    [btn4 setFrame:CGRectMake(100, 500, 80, 80)];
     [self.view addSubview:btn4];
     btn4.image = [UIImage imageNamed:@"aws-icon"];
     
