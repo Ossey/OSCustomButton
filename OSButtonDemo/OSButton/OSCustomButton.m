@@ -33,6 +33,7 @@ static CGRect CGRectEdgeInset(CGRect rect, UIEdgeInsets insets)
 @interface OSLabelContentView : UIView
 
 @property (nonatomic, strong) UILabel *textLabel;
+@property (nonatomic, assign) BOOL usingMaskView;
 
 @end
 
@@ -47,14 +48,18 @@ static CGRect CGRectEdgeInset(CGRect rect, UIEdgeInsets insets)
         _textLabel.minimumScaleFactor = 0.1;
         _textLabel.numberOfLines = 1;
         _textLabel.translatesAutoresizingMaskIntoConstraints = NO;
-        if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_7_1) {
-            self.maskView = _textLabel;
-        } else {
-            self.layer.mask = _textLabel.layer;
+        if (_usingMaskView) {
+            if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_7_1) {
+                self.maskView = _textLabel;
+            } else {
+                self.layer.mask = _textLabel.layer;
+            }
         }
+        
     }
     return _textLabel;
 }
+
 
 - (void)layoutSubviews {
     [super layoutSubviews];
@@ -67,6 +72,7 @@ static CGRect CGRectEdgeInset(CGRect rect, UIEdgeInsets insets)
 @interface OSImageConentView : UIView
 
 @property (nonatomic, strong) UIImageView *imageView;
+@property (nonatomic, assign) BOOL usingMaskView;
 
 @end
 
@@ -77,14 +83,19 @@ static CGRect CGRectEdgeInset(CGRect rect, UIEdgeInsets insets)
         _imageView = [[UIImageView alloc] init];
         _imageView.contentMode = UIViewContentModeScaleAspectFit;
         _imageView.backgroundColor = [UIColor clearColor];
-        if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_7_1) {
-            self.maskView = _imageView;
-        } else {
-            self.layer.mask = _imageView.layer;
+        [self addSubview:_imageView];
+        if (_usingMaskView) {
+            if (floor(NSFoundationVersionNumber) > NSFoundationVersionNumber_iOS_7_1) {
+                self.maskView = _imageView;
+            } else {
+                self.layer.mask = _imageView.layer;
+            }
         }
+        
     }
     return _imageView;
 }
+
 
 - (void)layoutSubviews {
     [super layoutSubviews];
@@ -135,7 +146,6 @@ imageView = _imageView;
     if (self = [super initWithFrame:frame]) {
         self.layer.masksToBounds = YES;
         _buttonType = type;
-        _contentColor = self.tintColor;
         _restoreSelectedState = YES;
         _trackingInside = NO;
         _cornerRadius = 0.0;
@@ -300,7 +310,7 @@ imageView = _imageView;
 #pragma mark - ~~~~~~~~~~~~~~~~~~~~~~~ set \ get ~~~~~~~~~~~~~~~~~~~~~~~
 
 - (UIColor *)contentColor {
-    return _contentColor ?: self.tintColor;
+    return _buttonType == OSButtonTypeDefault ? nil : _contentColor ?: self.tintColor;
 }
 
 - (UIColor *)foregroundColor {
@@ -321,6 +331,8 @@ imageView = _imageView;
     if (!_titleContentView) {
         _titleContentView = [[OSLabelContentView alloc] initWithFrame:CGRectNull];
         _titleContentView.backgroundColor = self.contentColor;
+        _titleContentView.usingMaskView = _buttonType != OSButtonTypeDefault;
+        _titleContentView.layer.masksToBounds = YES;
         [self insertSubview:_titleContentView aboveSubview:self.foregroundView];
     }
     return _titleContentView;
@@ -330,6 +342,8 @@ imageView = _imageView;
     if (!_detailContentView) {
         _detailContentView = [[OSLabelContentView alloc] initWithFrame:CGRectNull];
         _detailContentView.backgroundColor = self.contentColor;
+        _detailContentView.usingMaskView = _buttonType != OSButtonTypeDefault;
+        _detailContentView.layer.masksToBounds = YES;
         [self insertSubview:_detailContentView aboveSubview:self.foregroundView];
     }
     return _detailContentView;
@@ -338,7 +352,9 @@ imageView = _imageView;
 - (OSImageConentView *)imageContentView {
     if (!_imageContentView) {
         _imageContentView = [[OSImageConentView alloc] initWithFrame:CGRectNull];
+        _imageContentView.usingMaskView = _buttonType != OSButtonTypeDefault;
         _imageContentView.backgroundColor = self.contentColor;
+        _imageContentView.layer.masksToBounds = YES;
         [self insertSubview:_imageContentView aboveSubview:self.foregroundView];
     }
     return _imageContentView;
@@ -452,10 +468,11 @@ imageView = _imageView;
         self.contentAnimateColor = [UIColor colorWithRed:1.0/255.0 green:1.0/255.0 blue:255.0/255.0 alpha:1.0];;
         self.foregroundColor = [[UIColor blackColor] colorWithAlphaComponent:0.5];
         self.foregroundAnimateColor = [UIColor whiteColor];
-    } else {
+    } else if (buttonType == OSButtonType4 ){
         self.contentAnimateColor = [[UIColor blackColor] colorWithAlphaComponent:0.5];
         self.foregroundColor = [UIColor clearColor];
         self.foregroundAnimateColor = [UIColor clearColor];
+    } else {
     }
     
 }

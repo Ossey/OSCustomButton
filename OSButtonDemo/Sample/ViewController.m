@@ -44,8 +44,8 @@
     
     OSCustomButton *btn4 = [[OSCustomButton alloc] init];
     [btn4 setFrame:CGRectMake(100, 500, 80, 80)];
+    [btn4 setImage:[UIImage imageNamed:@"partner_boobuz"] forState:UIControlStateNormal];
     [self.view addSubview:btn4];
-    [btn4 setImage:[UIImage imageNamed:@"apple-icon"] forState:UIControlStateNormal];
     
     
 
