@@ -47,7 +47,7 @@
     [btn4 setImage:[UIImage imageNamed:@"partner_boobuz"] forState:UIControlStateNormal];
     [self.view addSubview:btn4];
     
-    
+    self.view.backgroundColor = [UIColor yellowColor];
 
 }
 

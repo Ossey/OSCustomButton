@@ -143,15 +143,7 @@ imageView = _imageView;
 }
 
 - (instancetype)initWithFrame:(CGRect)frame buttonType:(OSButtonType)type {
-    if (self = [super initWithFrame:frame]) {
-        self.layer.masksToBounds = YES;
-        _buttonType = type;
-        _restoreSelectedState = YES;
-        _trackingInside = NO;
-        _cornerRadius = 0.0;
-        _borderWidth = 0.0;
-        _contentEdgeInsets = UIEdgeInsetsZero;
-        _fadeInOutOnDisplay = YES;
+    if (self = [self initWithFrame:frame]) {
         self.buttonType = type;
     }
     return self;
@@ -159,7 +151,17 @@ imageView = _imageView;
 
 - (instancetype)initWithFrame:(CGRect)frame
 {
-    return [self initWithFrame:frame buttonType:OSButtonTypeDefault];
+    self = [super initWithFrame:frame];
+    if (self) {
+        self.layer.masksToBounds = YES;
+        _restoreSelectedState = YES;
+        _trackingInside = NO;
+        _cornerRadius = 0.0;
+        _borderWidth = 0.0;
+        _contentEdgeInsets = UIEdgeInsetsZero;
+        _fadeInOutOnDisplay = YES;
+    }
+    return self;
 }
 
 #pragma mark - ~~~~~~~~~~~~~~~~~~~~~~~ Public ~~~~~~~~~~~~~~~~~~~~~~~
@@ -216,42 +218,91 @@ imageView = _imageView;
                                            CGRectGetWidth(self.bounds) - layoutBorderWidth * 2,
                                            CGRectGetHeight(self.bounds) - layoutBorderWidth * 2);
     self.foregroundView.layer.cornerRadius = cornerRadius - borderWidth;
-    
     switch (self.buttonStyle)
     {
         case OSButtonStyleDefault:
         {
-            _imageContentView.frame = CGRectNull;
-            _detailContentView.frame = CGRectNull;
-            [_imageContentView removeFromSuperview];
-            [_detailContentView removeFromSuperview];
-            self.titleContentView.frame = [self boxingRect];
+            if (_imageContentView.usingMaskView) {
+                _imageContentView.frame = CGRectNull;
+                [_imageContentView removeFromSuperview];
+            } else {
+                _imageContentView.imageView.frame = CGRectNull;
+                [_imageContentView.imageView removeFromSuperview];
+            }
+            if (_detailContentView.usingMaskView) {
+                _detailContentView.frame = CGRectNull;
+                [_detailContentView removeFromSuperview];
+            } else {
+                _detailContentView.textLabel.frame = CGRectNull;
+                [_detailContentView.textLabel removeFromSuperview];
+            }
+            if (_titleContentView.usingMaskView) {
+                _titleContentView.frame = [self boxingRect];
+            } else {
+                _titleContentView.textLabel.frame = [self boxingRect];
+            }
         }
             break;
             
         case OSButtonStyleSubTitle:
         {
-            _imageContentView.frame = CGRectNull;
-            [_imageContentView removeFromSuperview];
             CGRect boxRect = [self boxingRect];
-            self.titleContentView.frame = CGRectMake(boxRect.origin.x,
-                                                     boxRect.origin.y,
-                                                     CGRectGetWidth(boxRect),
-                                                     CGRectGetHeight(boxRect) * 0.8);
-            self.detailContentView.frame = CGRectMake(boxRect.origin.x,
-                                                      CGRectGetMaxY(self.titleContentView.frame),
-                                                      CGRectGetWidth(boxRect),
-                                                      CGRectGetHeight(boxRect) * 0.2);
+            if (_imageContentView.usingMaskView) {
+                _imageContentView.frame = CGRectNull;
+                [_imageContentView removeFromSuperview];
+            } else {
+                _imageContentView.imageView.frame = CGRectNull;
+                [_imageContentView.imageView removeFromSuperview];
+            }
+            if (_detailContentView.usingMaskView) {
+                self.detailContentView.frame = CGRectMake(boxRect.origin.x,
+                                                          CGRectGetMaxY(self.titleContentView.frame),
+                                                          CGRectGetWidth(boxRect),
+                                                          CGRectGetHeight(boxRect) * 0.2);
+            } else {
+                self.detailContentView.textLabel.frame = CGRectMake(boxRect.origin.x,
+                                                                    CGRectGetMaxY(self.titleContentView.frame),
+                                                                    CGRectGetWidth(boxRect),
+                                                                    CGRectGetHeight(boxRect) * 0.2);
+            }
+            if (_titleContentView.usingMaskView) {
+                self.titleContentView.frame = CGRectMake(boxRect.origin.x,
+                                                         boxRect.origin.y,
+                                                         CGRectGetWidth(boxRect),
+                                                         CGRectGetHeight(boxRect) * 0.8);
+            } else {
+                self.titleContentView.textLabel.frame = CGRectMake(boxRect.origin.x,
+                                                                   boxRect.origin.y,
+                                                                   CGRectGetWidth(boxRect),
+                                                                   CGRectGetHeight(boxRect) * 0.8);
+            }
+            
+            
         }
             break;
             
         case OSButtonStyleCentralImage:
         {
-            _titleContentView.frame = CGRectNull;
-            _detailContentView.frame = CGRectNull;
-            [_titleContentView removeFromSuperview];
-            [_detailContentView removeFromSuperview];
-            self.imageContentView.frame = [self boxingRect];
+            if (_imageContentView.usingMaskView) {
+                self.imageContentView.frame = [self boxingRect];
+            } else {
+                self.imageContentView.imageView.frame = [self boxingRect];
+            }
+            if (_detailContentView.usingMaskView) {
+                _detailContentView.frame = CGRectNull;
+                [_detailContentView removeFromSuperview];
+            } else {
+                _detailContentView.textLabel.frame = CGRectNull;
+                [_detailContentView.textLabel removeFromSuperview];
+            }
+            if (_titleContentView.usingMaskView) {
+                _titleContentView.frame = CGRectNull;
+                [_titleContentView removeFromSuperview];
+            } else {
+                _titleContentView.textLabel.frame = CGRectNull;
+                [_titleContentView.textLabel removeFromSuperview];
+            }
+            
         }
             break;
             
@@ -259,16 +310,36 @@ imageView = _imageView;
         default:
         {
             CGRect boxRect = [self boxingRect];
-            _titleContentView.frame = CGRectNull;
-            [_titleContentView removeFromSuperview];
-            self.imageContentView.frame = CGRectMake(boxRect.origin.x,
-                                                     boxRect.origin.y,
-                                                     CGRectGetWidth(boxRect),
-                                                     CGRectGetHeight(boxRect) * 0.8);
-            self.detailContentView.frame = CGRectMake(boxRect.origin.x,
-                                                      CGRectGetMaxY(self.imageContentView.frame),
-                                                      CGRectGetWidth(boxRect),
-                                                      CGRectGetHeight(boxRect) * 0.2);
+            
+            if (_imageContentView.usingMaskView) {
+                self.imageContentView.frame = CGRectMake(boxRect.origin.x,
+                                                         boxRect.origin.y,
+                                                         CGRectGetWidth(boxRect),
+                                                         CGRectGetHeight(boxRect) * 0.8);
+            } else {
+                self.imageContentView.imageView.frame = CGRectMake(boxRect.origin.x,
+                                                                   boxRect.origin.y,
+                                                                   CGRectGetWidth(boxRect),
+                                                                   CGRectGetHeight(boxRect) * 0.8);
+            }
+            if (_detailContentView.usingMaskView) {
+                self.detailContentView.frame = CGRectMake(boxRect.origin.x,
+                                                          CGRectGetMaxY(self.imageContentView.frame),
+                                                          CGRectGetWidth(boxRect),
+                                                          CGRectGetHeight(boxRect) * 0.2);
+            } else {
+                self.detailContentView.textLabel.frame = CGRectMake(boxRect.origin.x,
+                                                                    CGRectGetMaxY(self.imageContentView.frame),
+                                                                    CGRectGetWidth(boxRect),
+                                                                    CGRectGetHeight(boxRect) * 0.2);
+            }
+            if (_titleContentView.usingMaskView) {
+                _titleContentView.frame = CGRectNull;
+                [_titleContentView removeFromSuperview];
+            } else {
+                _titleContentView.textLabel.frame = CGRectNull;
+                [_titleContentView.textLabel removeFromSuperview];
+            }
         }
             break;
     }
@@ -314,11 +385,11 @@ imageView = _imageView;
 }
 
 - (UIColor *)foregroundColor {
-    return _foregroundColor ?: [UIColor whiteColor];
+    return _buttonType == OSButtonTypeDefault ? [UIColor clearColor] : _foregroundColor ?: [UIColor whiteColor];
 }
 
 - (UIView *)foregroundView {
-    if (!_foregroundView) {
+    if (!_foregroundView && _buttonType != OSButtonTypeDefault) {
         _foregroundView = [[UIView alloc] initWithFrame:CGRectNull];
         _foregroundView.backgroundColor = self.foregroundColor;
         _foregroundView.layer.masksToBounds = YES;
@@ -333,7 +404,11 @@ imageView = _imageView;
         _titleContentView.backgroundColor = self.contentColor;
         _titleContentView.usingMaskView = _buttonType != OSButtonTypeDefault;
         _titleContentView.layer.masksToBounds = YES;
-        [self insertSubview:_titleContentView aboveSubview:self.foregroundView];
+        if (_titleContentView.usingMaskView) {
+            [self insertSubview:_titleContentView aboveSubview:self.foregroundView];
+        } else {
+            [self addSubview:_titleContentView.textLabel];
+        }
     }
     return _titleContentView;
 }
@@ -344,7 +419,11 @@ imageView = _imageView;
         _detailContentView.backgroundColor = self.contentColor;
         _detailContentView.usingMaskView = _buttonType != OSButtonTypeDefault;
         _detailContentView.layer.masksToBounds = YES;
-        [self insertSubview:_detailContentView aboveSubview:self.foregroundView];
+        if (_detailContentView.usingMaskView) {
+            [self insertSubview:_detailContentView aboveSubview:self.foregroundView];
+        } else {
+            [self addSubview:_detailContentView.textLabel];
+        }
     }
     return _detailContentView;
 }
@@ -355,7 +434,11 @@ imageView = _imageView;
         _imageContentView.usingMaskView = _buttonType != OSButtonTypeDefault;
         _imageContentView.backgroundColor = self.contentColor;
         _imageContentView.layer.masksToBounds = YES;
-        [self insertSubview:_imageContentView aboveSubview:self.foregroundView];
+        if (_imageContentView.usingMaskView) {
+            [self insertSubview:_imageContentView aboveSubview:self.foregroundView];
+        } else {
+            [self addSubview:_imageContentView.imageView];
+        }
     }
     return _imageContentView;
 }
@@ -473,6 +556,10 @@ imageView = _imageView;
         self.foregroundColor = [UIColor clearColor];
         self.foregroundAnimateColor = [UIColor clearColor];
     } else {
+        if (_imageContentView) {
+            _imageContentView.backgroundColor = [UIColor clearColor];
+            _imageContentView.imageView.backgroundColor = [UIColor clearColor];
+        }
     }
     
 }
