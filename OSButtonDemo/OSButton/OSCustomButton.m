@@ -22,13 +22,6 @@ typedef void(^OSButtonAnimateBlock)();
 #define OS_MAX_BORDER_WIDTH     OS_MAX_CORNER_RADIUS
 #define OS_PADDING_VALUE        0.29
 
-static CGRect CGRectEdgeInset(CGRect rect, UIEdgeInsets insets)
-{
-    return CGRectMake(CGRectGetMinX(rect) + insets.left,
-                      CGRectGetMinY(rect) + insets.top,
-                      CGRectGetWidth(rect) - insets.left - insets.right,
-                      CGRectGetHeight(rect) - insets.top - insets.bottom);
-}
 
 @interface OSLabelContentView : UIView
 
@@ -136,7 +129,9 @@ titleLabel = _titleLabel,
 detailLabel = _detailLabel,
 imageView = _imageView;
 
-#pragma mark - ~~~~~~~~~~~~~~~~~~~~~~~ initialize ~~~~~~~~~~~~~~~~~~~~~~~
+////////////////////////////////////////////////////////////////////////
+#pragma mark - Initializer
+////////////////////////////////////////////////////////////////////////
 
 + (instancetype)buttonWithType:(OSButtonType)buttonType  {
     return [[self alloc] initWithFrame:CGRectZero buttonType:buttonType];
@@ -164,7 +159,9 @@ imageView = _imageView;
     return self;
 }
 
-#pragma mark - ~~~~~~~~~~~~~~~~~~~~~~~ Public ~~~~~~~~~~~~~~~~~~~~~~~
+////////////////////////////////////////////////////////////////////////
+#pragma mark - Public methods
+////////////////////////////////////////////////////////////////////////
 
 - (void)setTitleColor:(nullable UIColor *)color forState:(UIControlState)state {
     _titleContentView.textLabel.textColor = color;
@@ -199,12 +196,17 @@ imageView = _imageView;
 }
 
 
-#pragma mark - ~~~~~~~~~~~~~~~~~~~~~~~ layout ~~~~~~~~~~~~~~~~~~~~~~~
+////////////////////////////////////////////////////////////////////////
+#pragma mark - Layout
+////////////////////////////////////////////////////////////////////////
+
+- (void)setFrame:(CGRect)frame {
+    [super setFrame:frame];
+    [self setButtonType:self.buttonType];
+}
 
 - (void)layoutSubviews {
     [super layoutSubviews];
-    
-    [self setButtonType:self.buttonType];
     
     CGFloat cornerRadius = self.layer.cornerRadius = MAX(MIN(OS_MAX_CORNER_RADIUS, self.cornerRadius), 0);
     CGFloat borderWidth = self.layer.borderWidth = MAX(MIN(OS_MAX_BORDER_WIDTH, self.borderWidth), 0);
@@ -363,7 +365,7 @@ imageView = _imageView;
     CGRect internalRect = CGRectInset(self.bounds,
                                       self.layer.cornerRadius * OS_PADDING_VALUE + self.layer.borderWidth,
                                       self.layer.cornerRadius * OS_PADDING_VALUE + self.layer.borderWidth);
-    return CGRectEdgeInset(internalRect, self.contentEdgeInsets);
+    return UIEdgeInsetsInsetRect(internalRect, self.contentEdgeInsets);
 }
 
 - (BOOL)shouldDisplayTitleLabel {
@@ -378,7 +380,9 @@ imageView = _imageView;
     return _imageView && _imageView.image;
 }
 
-#pragma mark - ~~~~~~~~~~~~~~~~~~~~~~~ set \ get ~~~~~~~~~~~~~~~~~~~~~~~
+////////////////////////////////////////////////////////////////////////
+#pragma mark - set \ get
+////////////////////////////////////////////////////////////////////////
 
 - (UIColor *)contentColor {
     return _buttonType == OSButtonTypeDefault ? nil : _contentColor ?: self.tintColor;
@@ -564,7 +568,9 @@ imageView = _imageView;
     
 }
 
-#pragma mark - ~~~~~~~~~~~~~~~~~~~~~~~ Touchs ~~~~~~~~~~~~~~~~~~~~~~~
+////////////////////////////////////////////////////////////////////////
+#pragma mark - Touchs
+////////////////////////////////////////////////////////////////////////
 
 - (UIView *)hitTest:(CGPoint)point withEvent:(UIEvent *)event {
     
@@ -619,7 +625,9 @@ imageView = _imageView;
     [super cancelTrackingWithEvent:event];
 }
 
-#pragma mark - ~~~~~~~~~~~~~~~~~~~~~~~ Animate ~~~~~~~~~~~~~~~~~~~~~~~
+////////////////////////////////////////////////////////////////////////
+#pragma mark - Animate
+////////////////////////////////////////////////////////////////////////
 
 - (OSButtonAnimateBlock)fadeInBlock {
     return ^ {
